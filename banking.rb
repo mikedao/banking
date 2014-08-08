@@ -4,6 +4,7 @@ class Credit
   def initialize(name)
     @name = name # Name of credit card
     @credit_accounts = [] # Sets up an array which will hold the people that have accounts
+    @office_space_fund = 0
     puts "#{name} was just created."
   end
 
@@ -12,7 +13,7 @@ class Credit
     puts "Your credit limit is #{limit}."
     puts "Your credit rate is #{rate} percent."
     @credit_accounts.push(person) # Adds person to array of people who have Credit Cards
-    person.cc_account.store(@name, [limit, 0, rate]) # Adds a hash - name, credit limit, and balance and rate
+    person.cc_account.store(@name, [limit, 0, rate]) # Adds a hash - name, credit limit, and balance and rate, and office space fund
   end
 
   def cc_spend(person, amount)
@@ -55,10 +56,13 @@ class Credit
     @credit_accounts.each do |person| # Loop to iterate through all account holders and take their balance and add it to the total
       puts "Calculating interest for #{person.name}. Rate is #{person.cc_account[@name][2]}."
       interest = person.cc_account[@name][1] * person.cc_account[@name][2] # Figuring out how much interest for the balance
-      interest = (interest*100).round / 100.0 # Multiplying by 100 and then rounding to get a whole number then dividing by 100.0 to get the two decimal points desired.
+      rounded_interest = (interest*100).ceil / 100.0 # Multiplying by 100 and then rounding to get a whole number then dividing by 100.0 to get the two decimal points desired.
+      free_money = rounded_interest - interest
+      @office_space_fund += free_money
       puts "Interest accrued is #{interest}."
-      person.cc_account[@name][0] -= interest # Taking amount of interest from the credit limit
-      person.cc_account[@name][1] += interest # Adding the interest accrued to the balance
+      puts "Office Space Fund is currently at: #{@office_space_fund}"
+      person.cc_account[@name][0] -= rounded_interest # Taking amount of interest from the credit limit
+      person.cc_account[@name][1] += rounded_interest # Adding the interest accrued to the balance
       puts "New credit limit is: #{person.cc_account[@name][0]}"
       puts "New balance is: #{person.cc_account[@name][1]}"
     end
