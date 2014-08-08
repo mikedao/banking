@@ -7,35 +7,47 @@ class Credit
     puts "#{name} was just created."
   end
 
-  def open_credit(person, limit)
+  def open_credit(person, limit, rate)
     puts "#{person.name}, thanks for opening an #{@name} credit card."
     puts "Your credit limit is #{limit}"
     @credit_accounts.push(person) # Adds person to array of people who have Credit Cards
-    person.cc_account.store(@name, [limit, 0]) # Adds a hash - name, credit limit, and balance.
+    person.cc_account.store(@name, [limit, 0, rate]) # Adds a hash - name, credit limit, and balance and rate
   end
 
   def cc_spend(person, amount)
-    if amount > person.cc_account[@name].first
+    if amount > person.cc_account[@name].first # Making sure user is not going over credit limit
         puts "You are trying to spend #{amount}. That is over your limit of #{person.cc_account[@name][0]}."
       else
-        person.cc_account[@name][0] -= amount
-        person.cc_account[@name][1] += amount      
+        person.cc_account[@name][0] -= amount # Removing amount from credit limit
+        person.cc_account[@name][1] += amount # Adding amount to balance
         puts "You just spent #{amount}. Your new limit is #{person.cc_account[@name][0]}."
     end
 
   end
 
   def cc_pay(person, amount)
-    if amount > person.cc_account[@name][1]
+    if amount > person.cc_account[@name][1] # Making sure user is not paying over balance
       puts "You are trying to pay #{amount}, which is over your balance of #{person.cc_account[@name][1]}."
     else
-      person.cc_account[@name][0] += amount
-      person.cc_account[@name][1] -= amount
+      person.cc_account[@name][0] += amount # Adding amount to credit limit
+      person.cc_account[@name][1] -= amount # Removing amount from balance
       puts "You just paid #{amount}. Your new limit is #{person.cc_account[@name][0]}."
       puts "Your balance is now #{person.cc_account[@name][1]}."
     end
 
   end
+
+  def calc_interest(person)
+    puts "Calculating interest. Rate is #{person.cc_account[@name][2]}."
+    interest = person.cc_account[@name][1] * person.cc_account[@name][2]
+    puts "Interest accrued is #{interest}."
+    person.cc_account[@name][0] -= interest
+    person.cc_account[@name][1] += interest
+    puts "New credit limit is: #{person.cc_account[@name][0]}"
+    puts "New balance is: #{person.cc_account[@name][1]}"
+
+  end
+
 
 end
 
@@ -102,8 +114,6 @@ class Person
   attr_accessor :cash, :banks_and_balances, :cc_account
   attr_reader :name
 
-
-
   def initialize(name, cash)
     @cash = cash # Sets how much cash a person has when they are created.
     @name = name # Sets name on creation.
@@ -134,8 +144,11 @@ puts chase.total_cash_in_bank
 puts wells_fargo.total_cash_in_bank
 
 amex = Credit.new("AMEX")
-amex.open_credit(me, 100)
+amex.open_credit(me, 100, 0.05)
 amex.cc_spend(me, 50)
 amex.cc_spend(me, 5000)
 amex.cc_pay(me, 5000)
 amex.cc_pay(me, 50)
+
+amex.cc_spend(me, 75) # Have to have a balance to make interest on it!
+amex.calc_interest(me)
