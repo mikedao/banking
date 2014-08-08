@@ -57,7 +57,7 @@ class Credit
       puts "Calculating interest for #{person.name}. Rate is #{person.cc_account[@name][2]}."
       interest = person.cc_account[@name][1] * person.cc_account[@name][2] # Figuring out how much interest for the balance
       rounded_interest = (interest*100).ceil / 100.0 # Multiplying by 100 and then rounding to get a whole number then dividing by 100.0 to get the two decimal points desired.
-      free_money = rounded_interest - interest
+      free_money = rounded_interest - interest # It feels good to be a gangster.
       @office_space_fund += free_money
       puts "Interest accrued is #{interest}."
       person.cc_account[@name][0] -= rounded_interest # Taking amount of interest from the credit limit
@@ -69,6 +69,7 @@ class Credit
   end
 
   def superman_2()
+    # No decimal point errors here.
     puts "Office Space Fund is currently at: #{@office_space_fund}"
   end
 
