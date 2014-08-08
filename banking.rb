@@ -1,5 +1,57 @@
+class Credit
+
+  attr_reader :name
+
+
+  def initialize(name)
+    @name = name
+    @credit_accounts = []
+    puts "#{name} was just created."
+  end
+
+  def open_credit(person, limit)
+    puts "#{person.name}, thanks for opening an #{@name} credit card."
+    puts "Your credit limit is #{limit}"
+    @credit_accounts.push(person)
+    person.cc_account.store(@name, [limit, 0]) # Adds a hash - name, credit limit, and balance.
+  end
+
+
+  def cc_spend(person, amount)
+
+    if amount > person.cc_account[@name].first
+        puts "You are trying to spend #{amount}. That is over your limit of #{person.cc_account[@name][0]}."
+      else
+        newlimit = person.cc_account[@name][0] - amount
+        newbalance = person.cc_account[@name][1] + amount
+        person.cc_account.store(@name, [newlimit, newbalance])
+        puts "You just spent #{amount}. Your new limit is #{person.cc_account[@name][0]}."
+
+    end
+  end
+
+  def cc_pay(person, amount)
+    if amount > person.cc_account[@name][1]
+      "You are trying to pay #{amount}, which is over your balance of #{person.cc_account[@name][1]}."
+    else
+      newlimit = person.cc_account[@name][0] + amount
+      newbalance = person.cc_account[@name][1] - amount
+      person.cc_account.store(@name, [newlimit, newbalance])
+      puts "You just paid #{amount}. Your new limit is #{person.cc_account[@name][0]}."
+      puts "Your balance is now #{person.cc_account[@name][1]}"
+    end
+
+
+
+  end
+
+
+
+end
+
+
 class Bank
-  attr_accessor :name
+  attr_reader :name
 
 
   def initialize(name)
@@ -69,42 +121,15 @@ class Person
   attr_accessor :cash
   attr_reader :name
   attr_accessor :banks_and_balances
+  attr_accessor :cc_account
 
   def initialize(name, cash)
     @cash = cash # Sets how much cash a person has when they are created.
     @name = name # Sets name on creation.
     @banks_and_balances = {} #Sets up hash to contain banks and balances.
+    @cc_account = {}
     puts "Hi, #{name}. You have $#{cash}!"
   end
-
-  def init_credit(credit_limit)
-    @credit_limit = credit_limit
-    @balance = 0
-    puts "Initializing credit card for #{@name} with a limit of $#{@credit_limit}."
-  end
-
-  def credit_spend(amount)
-    if amount > @credit_limit
-      puts "Charge Denied"
-    else
-      @credit_limit -= amount
-      @balance += amount
-      puts "You just spent $#{amount}. Your balance is $#{@balance} and your limit is $#{@credit_limit}."
-    end
-  end
-
-  def credit_pay(amount)
-    if amount > @balance
-      puts "You are paying more than your balance. Please only pay the balance."
-    else
-
-      @credit_limit += amount
-      @balance -= amount
-      puts "You just paid $#{amount}. Your current balance is $#{@balance} and your limit is $#{@credit_limit}"
-    end
-  end
-  
-
 
 end
 
@@ -131,8 +156,9 @@ chase.withdraw(me, 5000)
 puts chase.total_cash_in_bank
 puts wells_fargo.total_cash_in_bank
 
-me.init_credit(100)
-me.credit_spend(50)
-me.credit_spend(5000)
-me.credit_pay(5000)
-me.credit_pay(10)
+
+
+amex = Credit.new("AMEX")
+amex.open_credit(me, 100)
+amex.cc_spend(me, 50)
+amex.cc_pay(me, 50)
