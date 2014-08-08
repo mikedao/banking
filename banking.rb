@@ -94,9 +94,18 @@ class Person
   end
 
   def credit_pay(amount)
-    @credit_limit += amount
-    @balance -= amount
-    puts "You just paid $#{amount}. Your current balance is $#{@balance} and your limit is $#{@credit_limit}"
+    if amount > @balance
+      puts "You are paying more than your balance. Please only pay the balance."
+    else
+
+      @credit_limit += amount
+      @balance -= amount
+      puts "You just paid $#{amount}. Your current balance is $#{@balance} and your limit is $#{@credit_limit}"
+    end
+  end
+  
+
+
 end
 
 
@@ -125,3 +134,5 @@ puts wells_fargo.total_cash_in_bank
 me.init_credit(100)
 me.credit_spend(50)
 me.credit_spend(5000)
+me.credit_pay(5000)
+me.credit_pay(10)
