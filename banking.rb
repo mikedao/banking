@@ -60,7 +60,6 @@ class Credit
       free_money = rounded_interest - interest
       @office_space_fund += free_money
       puts "Interest accrued is #{interest}."
-      puts "Office Space Fund is currently at: #{@office_space_fund}"
       person.cc_account[@name][0] -= rounded_interest # Taking amount of interest from the credit limit
       person.cc_account[@name][1] += rounded_interest # Adding the interest accrued to the balance
       puts "New credit limit is: #{person.cc_account[@name][0]}"
@@ -68,6 +67,11 @@ class Credit
     end
 
   end
+
+  def superman_2()
+    puts "Office Space Fund is currently at: #{@office_space_fund}"
+  end
+
 
 end
 
@@ -173,3 +177,4 @@ amex.cc_pay(me, 50)
 
 amex.cc_spend(me, 75) # Have to have a balance to make interest on it!
 amex.interest_everybody
+amex.superman_2
