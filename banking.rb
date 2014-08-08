@@ -9,7 +9,8 @@ class Credit
 
   def open_credit(person, limit, rate)
     puts "#{person.name}, thanks for opening an #{@name} credit card."
-    puts "Your credit limit is #{limit}"
+    puts "Your credit limit is #{limit}."
+    puts "Your credit rate is #{rate} percent."
     @credit_accounts.push(person) # Adds person to array of people who have Credit Cards
     person.cc_account.store(@name, [limit, 0, rate]) # Adds a hash - name, credit limit, and balance and rate
   end
@@ -37,20 +38,34 @@ class Credit
 
   end
 
-  def calc_interest(person)
+  def calc_interest(person) # In case we need to calculate interest for a single person.
     puts "Calculating interest. Rate is #{person.cc_account[@name][2]}."
-    interest = person.cc_account[@name][1] * person.cc_account[@name][2]
+    interest = person.cc_account[@name][1] * person.cc_account[@name][2] # Figuring out how much interest for the balance
+    interest = (interest*100).round / 100.0 # Multiplying by 100 and then rounding to get a whole number then dividing by 100.0 to get the two decimal points desired.
     puts "Interest accrued is #{interest}."
-    person.cc_account[@name][0] -= interest
-    person.cc_account[@name][1] += interest
+    person.cc_account[@name][0] -= interest # Taking amount of interest from the credit limit
+    person.cc_account[@name][1] += interest # Adding the interest accrued to the balance
     puts "New credit limit is: #{person.cc_account[@name][0]}"
     puts "New balance is: #{person.cc_account[@name][1]}"
 
   end
 
+  def interest_everybody()
+
+    @credit_accounts.each do |person| # Loop to iterate through all account holders and take their balance and add it to the total
+      puts "Calculating interest for #{person.name}. Rate is #{person.cc_account[@name][2]}."
+      interest = person.cc_account[@name][1] * person.cc_account[@name][2] # Figuring out how much interest for the balance
+      interest = (interest*100).round / 100.0 # Multiplying by 100 and then rounding to get a whole number then dividing by 100.0 to get the two decimal points desired.
+      puts "Interest accrued is #{interest}."
+      person.cc_account[@name][0] -= interest # Taking amount of interest from the credit limit
+      person.cc_account[@name][1] += interest # Adding the interest accrued to the balance
+      puts "New credit limit is: #{person.cc_account[@name][0]}"
+      puts "New balance is: #{person.cc_account[@name][1]}"
+    end
+
+  end
 
 end
-
 
 class Bank
   attr_reader :name
@@ -145,10 +160,12 @@ puts wells_fargo.total_cash_in_bank
 
 amex = Credit.new("AMEX")
 amex.open_credit(me, 100, 0.05)
+amex.open_credit(friend1, 500, 0.075)
 amex.cc_spend(me, 50)
 amex.cc_spend(me, 5000)
+amex.cc_spend(friend1, 125)
 amex.cc_pay(me, 5000)
 amex.cc_pay(me, 50)
 
 amex.cc_spend(me, 75) # Have to have a balance to make interest on it!
-amex.calc_interest(me)
+amex.interest_everybody
