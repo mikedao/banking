@@ -1,58 +1,47 @@
 class Credit
-
   attr_reader :name
 
-
   def initialize(name)
-    @name = name
-    @credit_accounts = []
+    @name = name # Name of credit card
+    @credit_accounts = [] # Sets up an array which will hold the people that have accounts
     puts "#{name} was just created."
   end
 
   def open_credit(person, limit)
     puts "#{person.name}, thanks for opening an #{@name} credit card."
     puts "Your credit limit is #{limit}"
-    @credit_accounts.push(person)
+    @credit_accounts.push(person) # Adds person to array of people who have Credit Cards
     person.cc_account.store(@name, [limit, 0]) # Adds a hash - name, credit limit, and balance.
   end
 
-
   def cc_spend(person, amount)
-
     if amount > person.cc_account[@name].first
         puts "You are trying to spend #{amount}. That is over your limit of #{person.cc_account[@name][0]}."
       else
-        newlimit = person.cc_account[@name][0] - amount
-        newbalance = person.cc_account[@name][1] + amount
-        person.cc_account.store(@name, [newlimit, newbalance])
+        person.cc_account[@name][0] -= amount
+        person.cc_account[@name][1] += amount      
         puts "You just spent #{amount}. Your new limit is #{person.cc_account[@name][0]}."
-
     end
+
   end
 
   def cc_pay(person, amount)
     if amount > person.cc_account[@name][1]
-      "You are trying to pay #{amount}, which is over your balance of #{person.cc_account[@name][1]}."
+      puts "You are trying to pay #{amount}, which is over your balance of #{person.cc_account[@name][1]}."
     else
-      newlimit = person.cc_account[@name][0] + amount
-      newbalance = person.cc_account[@name][1] - amount
-      person.cc_account.store(@name, [newlimit, newbalance])
+      person.cc_account[@name][0] += amount
+      person.cc_account[@name][1] -= amount
       puts "You just paid #{amount}. Your new limit is #{person.cc_account[@name][0]}."
-      puts "Your balance is now #{person.cc_account[@name][1]}"
+      puts "Your balance is now #{person.cc_account[@name][1]}."
     end
 
-
-
   end
-
-
 
 end
 
 
 class Bank
   attr_reader :name
-
 
   def initialize(name)
     @name = name    # Holds name of bank
@@ -68,7 +57,6 @@ class Bank
   end
 
   def withdraw(person, amount)
-
     if amount > person.banks_and_balances[@name] # Checks to see if balance is sufficient for withdrawal
       puts "#{person.name} does not have enough money in the account to withdraw $#{amount}"
     else
@@ -80,7 +68,6 @@ class Bank
   end
 
   def deposit(person, amount)
-
     if amount > person.cash # Checks to see if cash is sufficient for deposit
       puts "#{person.name} does not have enough cash to deposit $#{amount}"
     else
@@ -92,11 +79,8 @@ class Bank
   end
 
   def transfer(person, destination, amount)
-
     person.banks_and_balances[@name] -= amount # Removes transfer amount from originating bank's balance.
-    person.banks_and_balances[destination.name] += amount # Adds transfer amount to destination bank's balance.
-
-
+    person.banks_and_balances[destination.name] += amount # Adds transfer amount to destination bank's balance
     puts "#{person.name} transferred $#{amount} from the #{@name} account to the #{destination.name} account."
     puts "The #{@name} account has $#{person.banks_and_balances[@name]} and the #{destination.name} account has $#{person.banks_and_balances[destination.name]}"
   end
@@ -107,21 +91,18 @@ class Bank
       account_balance = person.banks_and_balances[@name]
       total += account_balance
     end
+
     return "#{@name} has $#{total} in the bank."
 
   end
 
-
-
-
 end
 
-
 class Person
-  attr_accessor :cash
+  attr_accessor :cash, :banks_and_balances, :cc_account
   attr_reader :name
-  attr_accessor :banks_and_balances
-  attr_accessor :cc_account
+
+
 
   def initialize(name, cash)
     @cash = cash # Sets how much cash a person has when they are created.
@@ -132,10 +113,6 @@ class Person
   end
 
 end
-
-
-
-
 
 chase = Bank.new("JP Morgan Chase")
 wells_fargo = Bank.new("Wells Fargo")
@@ -156,9 +133,9 @@ chase.withdraw(me, 5000)
 puts chase.total_cash_in_bank
 puts wells_fargo.total_cash_in_bank
 
-
-
 amex = Credit.new("AMEX")
 amex.open_credit(me, 100)
 amex.cc_spend(me, 50)
+amex.cc_spend(me, 5000)
+amex.cc_pay(me, 5000)
 amex.cc_pay(me, 50)
