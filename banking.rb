@@ -68,7 +68,7 @@ class Credit
 
   end
 
-  def superman_2()
+  def superman_3()
     # No decimal point errors here.
     puts "Office Space Fund is currently at: #{@office_space_fund}"
   end
@@ -178,4 +178,4 @@ amex.cc_pay(me, 50)
 
 amex.cc_spend(me, 75) # Have to have a balance to make interest on it!
 amex.interest_everybody
-amex.superman_2
+amex.superman_3
