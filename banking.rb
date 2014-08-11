@@ -73,7 +73,6 @@ class Credit
     puts "Office Space Fund is currently at: #{@office_space_fund}"
   end
 
-
 end
 
 class Bank
